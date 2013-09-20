@@ -219,10 +219,12 @@ public:
 			[this](){
 			}
 		);
+
 		connect(&nextButton, &QPushButton::clicked,
 			[this](){
 			}
 		);
+
 		connect(&muteButton, &QPushButton::clicked,
 			[this](){
 				player.setMuted(muteButton.isChecked());
