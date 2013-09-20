@@ -1,0 +1,19 @@
+1.0:
+	*fix milliseconds to string
+	*player controls
+	fix margins
+	*fix sliders infinite cycle
+	fix play/pause/stop
+	playlist(s?), context menu
+	save/load config
+	command line player control
+	hotkeys
+
+2.0:
+	translations
+	fix 64 to 32 conversion duration
+	Windows build
+
+3.0
+	metadata editing
+	converter
