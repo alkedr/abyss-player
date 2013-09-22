@@ -46,8 +46,47 @@ public:
 using PathList = std::vector<boost::filesystem::path>;   // can include files and directories
 
 
-class PlaylistModel : public QAbstractItemModel {
+class PlaylistModel : public QAbstractTableModel {
+public:
+	PlaylistModel(const QMediaPlaylist & playlist) : playlist_(playlist) {
+	}
 
+	int columnCount(const QModelIndex & parent) const override {
+		if (parent.isValid()) return 0;
+		return 2;
+	}
+
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const override {
+		if (role != Qt::DisplayRole) return QVariant();
+
+		if (orientation == Qt::Horizontal) {
+			switch (section) {
+				case 0: return QString("file name");
+				case 1: return QString("time");
+			}
+		} else {
+			return QString::number(section+1);
+		}
+		return QVariant();
+	}
+
+	int rowCount(const QModelIndex & parent) const override {
+		if (parent.isValid()) return 0;
+		return playlist_.mediaCount();
+	}
+
+	QVariant data(const QModelIndex & index, int role) const override {
+		if (role != Qt::DisplayRole) return QVariant();
+
+		const auto & media = playlist_.media(index.row());
+		switch (index.column()) {
+			case 0: return media.canonicalUrl();
+			default: return QVariant();
+		}
+	}
+
+private:
+	const QMediaPlaylist & playlist_;
 };
 
 
@@ -109,7 +148,9 @@ class MainWindow : public QMainWindow {
 		QHBoxLayout secondLineLayout;
 			MySlider timeSlider;
 			QLabel timeLabel;
-		QTableWidget playlistTable;
+		QTableView playlistTable;
+		PlaylistModel playlistModel;
+		QMediaPlaylist playlist;
 
 public:
 
@@ -122,6 +163,7 @@ public:
 	, repeatButton(QIcon::fromTheme("media-playlist-repeat"), "")
 	, randomizeButton(QIcon::fromTheme("media-playlist-shuffle"), "")
 	, timeLabel("0:00 / 0:00")
+	, playlistModel(playlist)
 	{
 		playPauseButton.setCheckable(true);
 		playPauseButton.setShortcut(QKeySequence("p"));
@@ -139,8 +181,9 @@ public:
 		timeSlider.setOrientation(Qt::Horizontal);
 		timeSlider.setTracking(false);
 
-		playlistTable.insertColumn(0);
-		playlistTable.setHorizontalHeaderLabels({ "file name" });
+		playlist.addMedia(QUrl::fromLocalFile("/home/alkedr/music/zero-project/zero-project - 02 - Gothic.ogg"));
+
+		playlistTable.setModel(&playlistModel);
 
 		setCentralWidget(&mainWidget);
 		mainWidget.setLayout(&mainLayout);
@@ -198,6 +241,11 @@ public:
 			}
 		);
 
+		connect(&player, &QMediaPlayer::setPlaylist,
+			[this](QMediaPlaylist * newPlaylist) {
+			}
+		);
+
 
 		connect(&playPauseButton, &QPushButton::clicked,
 			[this]() {
@@ -245,9 +293,17 @@ public:
 		);
 
 
+		connect(&playlistTable, &QAbstractItemView::activated,
+			[this](const QModelIndex & index) {
+				if (index.isValid()) {
+					player.playlist()->setCurrentIndex(index.row());
+				}
+			}
+		);
+
+		player.setPlaylist(&playlist);
+
 		player.setNotifyInterval(50);
-		player.setMedia(QUrl::fromLocalFile("/home/alkedr/music/zero-project/zero-project - 02 - Gothic.ogg"));
-		std::cout << player.duration() << std::endl;
 		player.setVolume(50);
 		player.play();
 	}
