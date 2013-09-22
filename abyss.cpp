@@ -210,36 +210,36 @@ public:
 		);
 
 		connect(&stopButton, &QPushButton::clicked,
-			[this](){
+			[this]() {
 				player.stop();
 			}
 		);
 
 		connect(&prevButton, &QPushButton::clicked, 
-			[this](){
+			[this]() {
 			}
 		);
 
 		connect(&nextButton, &QPushButton::clicked,
-			[this](){
+			[this]() {
 			}
 		);
 
 		connect(&muteButton, &QPushButton::clicked,
-			[this](){
+			[this]() {
 				player.setMuted(muteButton.isChecked());
 			}
 		);
 
 
 		connect(&volumeSlider, &MySlider::valueChanged, 
-			[this](int newValue){
+			[this](int newValue) {
 				player.setVolume(newValue);
 			}
 		);
 
 		connect(&timeSlider, &MySlider::valueChanged,
-			[this](int newValue){
+			[this](int newValue) {
 				player.setPosition(newValue);
 			}
 		);
