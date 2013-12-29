@@ -130,8 +130,6 @@ protected:
 };
 
 class MainWindow : public QMainWindow {
-	Q_OBJECT
-
 	QMediaPlayer player;
 
 	QWidget mainWidget;
@@ -263,7 +261,7 @@ public:
 			}
 		);
 
-		connect(&prevButton, &QPushButton::clicked, 
+		connect(&prevButton, &QPushButton::clicked,
 			[this]() {
 			}
 		);
@@ -280,7 +278,7 @@ public:
 		);
 
 
-		connect(&volumeSlider, &MySlider::valueChanged, 
+		connect(&volumeSlider, &MySlider::valueChanged,
 			[this](int newValue) {
 				player.setVolume(newValue);
 			}

@@ -1,4 +1,4 @@
-RELEASE := y
+RELEASE := n
 
 SHELL := bash
 CXX := clang++ -std=c++11
@@ -11,7 +11,7 @@ ifeq ($(RELEASE), y)
 	LFLAGS += -s
 else
 	OPTIMIZE_FLAGS += -O0
-	WARNINGS_FLAGS += -Weverything -Wno-padded -Wno-c++98-compat-pedantic -Wno-unused-member-function
+	WARNINGS_FLAGS += -Weverything -Wno-padded -Wno-c++98-compat-pedantic
 	DEBUG_FLAGS += -ggdb3
 	LFLAGS +=
 endif
@@ -25,7 +25,7 @@ all: abyss-player
 
 abyss-player: abyss.cpp Makefile
 	@echo "BUILD $@"
-	@cat <(cat abyss.cpp) <(moc abyss.cpp) | $(CXX) -x c++ $(CXXFLAGS) -o $@ -
+	@$(CXX) $(CXXFLAGS) $< -o $@
 ifeq ($(RELEASE), y)
 	@echo "UPX $@"
 	@$(UPX) $@
