@@ -4,6 +4,8 @@ SHELL := bash
 CXX := clang++ -std=c++11
 UPX := upx --best --ultra-brute --lzma -qqq
 
+DISTFILES := LICENSE Makefile README.md TODO main.cpp
+
 ifeq ($(RELEASE), y)
 	OPTIMIZE_FLAGS += -Oz
 	WARNINGS_FLAGS += -w
@@ -23,7 +25,7 @@ CXXFLAGS = -pipe -fPIE $(OPTIMIZE_FLAGS) $(DEBUG_FLAGS) $(LFLAGS) $(WARNINGS_FLA
 
 all: abyss-player
 
-abyss-player: abyss.cpp Makefile
+abyss-player: main.cpp Makefile
 	@echo "BUILD $@"
 	@$(CXX) $(CXXFLAGS) $< -o $@
 ifeq ($(RELEASE), y)
@@ -32,7 +34,7 @@ ifeq ($(RELEASE), y)
 endif
 
 dist:
-	tar -cJf mdc-1.0.tar.xz $(DISTFILES)
+	tar -cJf abyss-player-1.0.tar.xz $(DISTFILES)
 
 clean:
 	rm -f abyss-player
