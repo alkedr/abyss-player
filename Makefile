@@ -18,7 +18,7 @@ else
 	LFLAGS +=
 endif
 
-CXXFLAGS = -pipe -fPIE $(OPTIMIZE_FLAGS) $(DEBUG_FLAGS) $(LFLAGS) $(WARNINGS_FLAGS) $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets Qt5Multimedia | sed 's/-I\//-isystem\ \//g') -lboost_system
+CXXFLAGS = -pipe -fPIE $(OPTIMIZE_FLAGS) $(DEBUG_FLAGS) $(LFLAGS) $(WARNINGS_FLAGS) $(shell pkg-config --cflags --libs Qt5Gui Qt5Widgets Qt5Multimedia | sed 's/-I\//-isystem\ \//g') -lboost_system -lboost_filesystem
 
 
 .PHONY : all dist clean
@@ -38,4 +38,3 @@ dist:
 
 clean:
 	rm -f abyss-player
-

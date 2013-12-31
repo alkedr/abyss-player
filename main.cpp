@@ -144,19 +144,15 @@ public:
 			auto randomizeButton = createCheckableButton("media-playlist-shuffle", "Shift+r", mainLayout);
 			auto volumeSlider = createSlider(mainLayout);
 
-
 		connect(player, &QMediaPlayer::stateChanged,
 			[playPauseButton, stopButton](QMediaPlayer::State newState) {
 				if (newState == QMediaPlayer::StoppedState) {
-					std::cout << "QMediaPlayer::stateChanged to Stopped" << std::endl;
 					playPauseButton->setChecked(false);
 					stopButton->setChecked(true);
 				} else if (newState == QMediaPlayer::PlayingState) {
-					std::cout << "QMediaPlayer::stateChanged to Playing" << std::endl;
 					playPauseButton->setChecked(true);
 					stopButton->setChecked(false);
 				} else if (newState == QMediaPlayer::PausedState) {
-					std::cout << "QMediaPlayer::stateChanged to Paused" << std::endl;
 					playPauseButton->setChecked(false);
 					stopButton->setChecked(false);
 				}
@@ -249,7 +245,6 @@ public:
 		timeSlider->setOrientation(Qt::Horizontal);
 		timeSlider->setTracking(false);
 
-
 		connect(timeSlider, &MySlider::valueChanged,
 			[player](int newValue) {
 				player->setPosition(newValue);
@@ -274,9 +269,22 @@ public:
 	}
 };
 
+void addDirectoryToPlaylist(QMediaPlaylist * playlist, const char * dirName) {
+	for (
+		boost::filesystem::recursive_directory_iterator it(dirName);
+		it != boost::filesystem::recursive_directory_iterator();
+		it++
+	) {
+		const auto & path = it->path();
+		if (!boost::filesystem::is_directory(path)) {
+			playlist->addMedia(QUrl::fromLocalFile(path.c_str()));
+		}
+	}
+}
+
 QMediaPlaylist * loadPlaylist() {
 	QMediaPlaylist * playlist = new QMediaPlaylist();
-	playlist->addMedia(QUrl::fromLocalFile("/home/alkedr/music/zero-project/zero-project - 02 - Gothic.ogg"));
+	addDirectoryToPlaylist(playlist, "/home/alkedr/music");
 	return playlist;
 }
 
@@ -286,12 +294,6 @@ public:
 		QMediaPlaylist * playlist = loadPlaylist();
 		setModel(new PlaylistModel(playlist));
 		player->setPlaylist(playlist);
-
-
-		/*connect(player, &QMediaPlayer::setPlaylist,
-			[this](QMediaPlaylist * newPlaylist) {
-			}
-		);*/
 
 		connect(this, &QAbstractItemView::activated,
 			[player](const QModelIndex & index) {
@@ -316,7 +318,6 @@ public:
 
 		player.setNotifyInterval(50);
 		player.setVolume(50);
-		player.play();
 	}
 
 	~MainWindow() {
