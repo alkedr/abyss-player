@@ -270,6 +270,7 @@ public:
 };
 
 void addDirectoryToPlaylist(QMediaPlaylist * playlist, const char * dirName) {
+	std::vector<boost::filesystem::path> pathes;
 	for (
 		boost::filesystem::recursive_directory_iterator it(dirName);
 		it != boost::filesystem::recursive_directory_iterator();
@@ -277,8 +278,14 @@ void addDirectoryToPlaylist(QMediaPlaylist * playlist, const char * dirName) {
 	) {
 		const auto & path = it->path();
 		if (!boost::filesystem::is_directory(path)) {
-			playlist->addMedia(QUrl::fromLocalFile(path.c_str()));
+			pathes.push_back(path);
 		}
+	}
+
+	std::sort(pathes.begin(), pathes.end());
+
+	for (const auto & path : pathes) {
+		playlist->addMedia(QUrl::fromLocalFile(path.c_str()));
 	}
 }
 
